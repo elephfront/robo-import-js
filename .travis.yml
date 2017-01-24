@@ -12,6 +12,9 @@ env:
     - DEFAULT=1
 
 matrix:
+  allow_failures:
+    - env: CODECOVERAGE=1 DEFAULT=0
+
   fast_finish: true
 
   include:
@@ -20,17 +23,17 @@ matrix:
 
 before_script:
   - composer self-update
-  - composer install --prefer-source --no-interaction
+  - composer install --prefer-dist --no-interaction
 
   - phpenv rehash
   - set +H
 
 script:
-  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit --stderr; fi"
+  - sh -c "if [ '$DEFAULT' = '1' ]; then vendor/bin/phpunit --stderr; fi"
   - sh -c "if [ '$CODECOVERAGE' = '1' ]; then vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then bash <(curl -s https://codecov.io/bash) || true; fi"
 
 notifications:
   email: false
