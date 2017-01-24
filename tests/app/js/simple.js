@@ -1,0 +1,1 @@
+roboimport('imports/bogus');
