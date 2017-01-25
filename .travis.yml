@@ -33,7 +33,7 @@ script:
   - sh -c "if [ '$CODECOVERAGE' = '1' ]; then vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
 
 after_success:
-  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then bash <(curl -s https://codecov.io/bash) || true; fi"
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then curl -s https://codecov.io/bash | bash || true; fi"
 
 notifications:
   email: false
