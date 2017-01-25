@@ -18,4 +18,20 @@
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
     </php>
+
+    <!-- Prevent coverage reports from looking in tests and vendors -->
+    <filter>
+        <blacklist>
+            <directory suffix=".php">./vendor/</directory>
+
+            <directory suffix=".php">./tests/</directory>
+        </blacklist>
+    </filter>
+
+    <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
+    </filter>
 </phpunit>
