@@ -25,6 +25,8 @@ composer require havokinspiration/robo-import-js
 You can load the task in your RoboFile using the `LoadImportJavascriptTasksTrait` trait:
 
 ```php
+use HavokInspiration\RoboImportJs\Task\Loader\LoadImportJavascriptTasksTrait;
+
 class RoboFile extends Tasks
 {
 
