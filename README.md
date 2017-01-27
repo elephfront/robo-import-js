@@ -37,28 +37,30 @@ class RoboFile extends Tasks
         $this
             ->taskImportJavascript([
                 'assets/js/main.js' => 'assets/min/main.min.js',
-                'assets/js/specific.js' => 'assets/min/specific.min.js',
+                'assets/js/home.js' => 'assets/min/home.min.js',
             ])
             ->run();
     }
 }
 ```
 
-The only argument the `taskImportJavascript()` takes is an array which maps the source files to the destination files : it will load the **assets/js/main.js**, do its magic and put the final content in **assets/min/main.min.js**.
+The only argument the `taskImportJavascript()` takes is an array which maps the source files to the destination files : it will load the **assets/js/main.js**, do its magic and put the final content in **assets/min/main.min.js** and do the same for all of the other files.
 
-In the end, you will get one file per lines. 
+In the end, you will get one file per entry in your maps array. 
 
 Import in your JS files are made with the fake `roboimport()` method:
 
 ```javascript
-// main.js
+// in the home.js file
 roboimport('libs/jquery');
-roboimport('plugins/some-jquery-plugin');
+roboimport('plugins/slider.min.js');
 
-// some custom JS code
+var slider = $('.slider').initSlider();
 ```
 
-When reading the content of the **main.js** file, the task will replace the `roboimport()` statements with the content of the linked file.
+When reading the content of the **home.js** file, the task will replace the `roboimport()` statements with the content of the linked file.
+
+This is particularly useful if you want to have very "page specific" production JS files. 
 
 Note that the task can read nested `roboimport()` statements, meaning an imported file can itself import other files.
 
