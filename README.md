@@ -1,7 +1,8 @@
 # Robo Import JS
 
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?branch=master)](LICENSE.txt)
 [![Build Status](https://travis-ci.org/HavokInspiration/robo-import-js.svg?branch=master)](https://travis-ci.org/HavokInspiration/robo-import-js)
+[![Codecov](https://img.shields.io/codecov/c/github/HavokInspiration/robo-import-js.svg)](https://github.com/HavokInspiration/robo-import-js)
 
 This [Robo](https://github.com/consolidation/robo) task brings an import method for Javascript files. Think of it as an equivalent of the PHP `include` function or as the `@import` statement in SASS files for Javascript files. 
 
