@@ -1,7 +1,7 @@
 <?php
-namespace HavokInspiration\RoboImportJs\Tests;
+namespace Elephfront\RoboImportJs\Tests;
 
-use HavokInspiration\RoboImportJs\Task\Assets\ImportJavascript;
+use Elephfront\RoboImportJs\Task\Assets\ImportJavascript;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\NullLogger;
 use Robo\Result;
@@ -20,7 +20,7 @@ class ImportJavascriptTest extends PHPUnit_Framework_TestCase
     /**
      * Instance of the task that will be tested.
      *
-     * @var \HavokInspiration\RoboImportJs\Task\Assets\ImportJavascript
+     * @var \Elephfront\RoboImportJs\Task\Assets\ImportJavascript
      */
     protected $task;
 

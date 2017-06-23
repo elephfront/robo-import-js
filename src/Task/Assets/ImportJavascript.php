@@ -1,5 +1,5 @@
 <?php
-namespace HavokInspiration\RoboImportJs\Task\Assets;
+namespace Elephfront\RoboImportJs\Task\Assets;
 
 use InvalidArgumentException;
 use Robo\Contract\TaskInterface;

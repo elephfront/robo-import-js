@@ -1,5 +1,5 @@
 {
-    "name": "havokinspiration/robo-import-js",
+    "name": "elephfront/robo-import-js",
     "description": "Robo task to import the content of a JS file into another one.",
     "type": "robo-tasks",
     "license": "MIT",
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "HavokInspiration\\RoboImportJs\\": "src"
+            "Elephfront\\RoboImportJs\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HavokInspiration\\RoboImportJs\\Tests\\": "test/TestCase"
+            "Elephfront\\RoboImportJs\\Tests\\": "test/TestCase"
         }
     }
 }

@@ -1,8 +1,8 @@
 # Robo Import JS
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?branch=master)](LICENSE.txt)
-[![Build Status](https://travis-ci.org/HavokInspiration/robo-import-js.svg?branch=master)](https://travis-ci.org/HavokInspiration/robo-import-js)
-[![Codecov](https://img.shields.io/codecov/c/github/HavokInspiration/robo-import-js.svg)](https://github.com/HavokInspiration/robo-import-js)
+[![Build Status](https://travis-ci.org/Elephfront/robo-import-js.svg?branch=master)](https://travis-ci.org/Elephfront/robo-import-js)
+[![Codecov](https://img.shields.io/codecov/c/github/Elephfront/robo-import-js.svg)](https://github.com/Elephfront/robo-import-js)
 
 This [Robo](https://github.com/consolidation/robo) task brings an import method for Javascript files. Think of it as an equivalent of the PHP `include` function or as the `@import` statement in SASS files for Javascript files. 
 
@@ -18,7 +18,7 @@ You can install this Robo task using [composer](http://getcomposer.org).
 The recommended way to install composer packages is:
 
 ```
-composer require havokinspiration/robo-import-js
+composer require elephfront/robo-import-js
 ```
 
 ## Using the task
@@ -26,7 +26,7 @@ composer require havokinspiration/robo-import-js
 You can load the task in your RoboFile using the `LoadImportJavascriptTasksTrait` trait:
 
 ```php
-use HavokInspiration\RoboImportJs\Task\Loader\LoadImportJavascriptTasksTrait;
+use Elephfront\RoboImportJs\Task\Loader\LoadImportJavascriptTasksTrait;
 
 class RoboFile extends Tasks
 {
@@ -67,8 +67,8 @@ Note that the task can read nested `roboimport()` statements, meaning an importe
 
 ## Contributing
 
-If you find a bug or would like to ask for a feature, please use the [GitHub issue tracker](https://github.com/HavokInspiration/robo-import-js/issues).
-If you would like to submit a fix or a feature, please fork the repository and [submit a pull request](https://github.com/HavokInspiration/robo-import-js/pulls).
+If you find a bug or would like to ask for a feature, please use the [GitHub issue tracker](https://github.com/Elephfront/robo-import-js/issues).
+If you would like to submit a fix or a feature, please fork the repository and [submit a pull request](https://github.com/Elephfront/robo-import-js/pulls).
 
 ### Coding standards
 
