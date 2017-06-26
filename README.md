@@ -8,7 +8,7 @@ This [Robo](https://github.com/consolidation/robo) task brings an import method 
 
 ## Requirements
 
-- PHP >= 5.6.0
+- PHP >= 7.1.0
 - Robo
 
 ## Installation
