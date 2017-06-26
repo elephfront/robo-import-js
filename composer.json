@@ -14,8 +14,7 @@
         "consolidation/robo": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
-        "phpstan/phpstan": "^0.6"
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": {
