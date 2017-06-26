@@ -2,7 +2,7 @@
 namespace Elephfront\RoboImportJs\Tests;
 
 use Elephfront\RoboImportJs\Task\Assets\ImportJavascript;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Robo\Result;
 use Robo\Robo;
@@ -14,7 +14,7 @@ use Robo\Robo;
  *
  * @package Mystiq\AlphaTheme\Tests
  */
-class ImportJavascriptTest extends PHPUnit_Framework_TestCase
+class ImportJavascriptTest extends TestCase
 {
 
     /**
