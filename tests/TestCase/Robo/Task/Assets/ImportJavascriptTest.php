@@ -145,7 +145,7 @@ class ImportJavascriptTest extends TestCase
             TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => [
                 'js' => 'roboimport(\'imports/bogus\');',
                 'destination' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
-            ] 
+            ]
         ]);
         $this->task->receiveState($data);
         $result = $this->task->run();
