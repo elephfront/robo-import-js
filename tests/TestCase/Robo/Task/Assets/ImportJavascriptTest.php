@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Robo\Result;
 use Robo\Robo;
+use Robo\State\Data;
 
 /**
  * Class ImportJavascriptTest
@@ -130,5 +131,37 @@ class ImportJavascriptTest extends TestCase
             file_get_contents(TESTS_ROOT . 'comparisons' . DS . __FUNCTION__ . '.js'),
             file_get_contents(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js')
         );
+    }
+
+    /**
+     * Test a basic import using the chained state.
+     *
+     * @return void
+     */
+    public function testImportWithChainedState()
+    {
+        $data = new Data();
+        $data->mergeData([
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => [
+                'js' => 'roboimport(\'imports/bogus\');',
+                'destination' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+            ]
+        ]);
+        $this->task->receiveState($data);
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(0, $result->getExitCode());
+        
+        $resultData = $result->getData();
+        $expected = [
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => [
+                'js' => '// Some bogus JS code goes here',
+                'destination' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+            ]
+        ];
+
+        $this->assertTrue(is_array($resultData));
+        $this->assertEquals($expected, $resultData);
     }
 }

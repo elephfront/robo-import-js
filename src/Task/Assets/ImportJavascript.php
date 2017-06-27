@@ -4,6 +4,7 @@ namespace Elephfront\RoboImportJs\Task\Assets;
 use InvalidArgumentException;
 use Robo\Contract\TaskInterface;
 use Robo\Result;
+use Robo\State\Data;
 use Robo\Task\BaseTask;
 
 /**
@@ -29,6 +30,21 @@ class ImportJavascript extends BaseTask implements TaskInterface
      * @var array
      */
     protected $destinationsMap = [];
+
+    /**
+     * Data that will be passed to the next task with the Robo response.
+     *
+     * @var array
+     */
+    protected $returnData = [];
+
+    /**
+     * Data that was received from the previous task.
+     * This array can stay empty if this task if the first to be run.
+     *
+     * @var array
+     */
+    protected $data = [];
 
     /**
      * Constructor. Will bind the destinations map.
@@ -62,26 +78,57 @@ class ImportJavascript extends BaseTask implements TaskInterface
      */
     public function run()
     {
-        if (empty($this->destinationsMap)) {
-            throw new InvalidArgumentException(
-                'Impossible to run the ImportJavascript task without a destinations map.'
-            );
-        }
-
         $error = false;
-        foreach ($this->destinationsMap as $source => $destination) {
-            $destinationContent = $this->getContent($source);
-            if (!file_put_contents($destination, $destinationContent)) {
-                $error = $source;
-                break;
-            } else {
-                $this->printTaskSuccess(
-                    sprintf(
-                        'Replaced import statement from <info>%s</info> to <info>%s</info>',
-                        $source,
-                        $destination
-                    )
+        if ($this->data) {
+            foreach ($this->data as $source => $content) {
+                $js = $content['js'];
+                $destination = $content['destination'];
+                $sourceDir = dirname($source) . DIRECTORY_SEPARATOR;
+
+                try {
+                    $js = $this->replaceImports($js, $sourceDir);
+                    $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
+                    $this->printTaskSuccess(
+                        sprintf(
+                            'Replaced import statement from <info>%s</info> to <info>%s</info>',
+                            $source,
+                            $destination
+                        )
+                    );
+                } catch (InvalidArgumentException $e) {
+                    $error = $e->getMessage();
+                }
+            }
+        } else {
+            if (empty($this->destinationsMap)) {
+                throw new InvalidArgumentException(
+                    'Impossible to run the ImportJavascript task without a destinations map.'
                 );
+            }
+
+            foreach ($this->destinationsMap as $source => $destination) {
+                $js = $this->getContent($source);
+
+                $destinationDirectory = dirname($destination);
+
+                if (!is_dir($destinationDirectory)) {
+                    mkdir($destinationDirectory, 0755, true);
+                }
+
+                if (!file_put_contents($destination, $js)) {
+                    $error = $source;
+                    break;
+                } else {
+                    $this->printTaskSuccess(
+                        sprintf(
+                            'Replaced import statement from <info>%s</info> to <info>%s</info>',
+                            $source,
+                            $destination
+                        )
+                    );
+                }
+
+                $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
             }
         }
 
@@ -91,7 +138,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
                 sprintf('An error occurred while writing the destination file for source file `%s`', $error)
             );
         } else {
-            return Result::success($this, 'All import statements in JS files replaced.');
+            return Result::success($this, 'All import statements in JS files replaced.', $this->returnData);
         }
     }
 
@@ -163,5 +210,17 @@ class ImportJavascript extends BaseTask implements TaskInterface
         }
 
         return $matches;
+    }
+
+    /**
+     * Gets the state from the previous task. Stores it in the `data` attribute of the object.
+     * This method is called before the task is run.
+     *
+     * @param \Robo\State\Data $state State passed from the previous task.
+     * @return void
+     */
+    public function receiveState(Data $state)
+    {
+        $this->data = $state->getData();
     }
 }
