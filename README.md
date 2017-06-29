@@ -65,6 +65,26 @@ This is particularly useful if you want to have very "page specific" production 
 
 Note that the task can read nested `roboimport()` statements, meaning an imported file can itself import other files.
 
+## Chained State support
+
+Robo includes a concept called the [Chained State](http://robo.li/collections/#chained-state) that allows tasks that need to work together to be executed in a sequence and pass the state of the execution of a task to the next one.
+For instance, if you are managing assets files, you will have a task that compile SCSS to CSS then another one that minify the results.
+
+This task is compatible with this feature.
+
+All you need to do is make the previous task return the content the robo-import-task should operate on using the `data` argument of a `Robo\Result::success()` or `Robo\Result::error()` call. The passed `data` should have the following format:
+ 
+```php
+$data = [
+    'path/to/source/file' => [
+        'js' => '// Some javascript code',
+        'destination' => 'path/to/destination/file
+    ]
+];
+```
+
+In turn, when the robo-import-task is done, it will pass the results of its work to the next task following the same format.
+
 ## Contributing
 
 If you find a bug or would like to ask for a feature, please use the [GitHub issue tracker](https://github.com/Elephfront/robo-import-js/issues).
