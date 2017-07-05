@@ -120,6 +120,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
                         break;
                     }
 
+                    $this->outputSuccessMessage($source, $destination);
                     $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
                 } catch (InvalidArgumentException $e) {
                     $error = $e->getMessage();
@@ -136,17 +137,16 @@ class ImportJavascript extends BaseTask implements TaskInterface
             foreach ($this->destinationsMap as $source => $destination) {
                 $js = $this->getContent($source);
 
-                if ($this->writeFile && !$this->writeFile($destination, $js)) {
+                $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
 
+                if ($this->writeFile && !$this->writeFile($destination, $js)) {
                     if (!file_put_contents($destination, $js)) {
                         $error = $source;
                         break;
                     }
-
-                    $this->outputSuccessMessage($source, $destination);
-
-                    $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
                 }
+
+                $this->outputSuccessMessage($source, $destination);
             }
         }
 

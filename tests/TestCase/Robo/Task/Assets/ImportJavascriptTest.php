@@ -36,6 +36,9 @@ class ImportJavascriptTest extends TestCase
         Robo::setContainer(Robo::createDefaultContainer());
         $this->task = new ImportJavascript();
         $this->task->setLogger(new NullLogger());
+        if (file_exists(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js')) {
+            unlink(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js');
+        }
     }
 
     /**
@@ -110,6 +113,36 @@ class ImportJavascriptTest extends TestCase
             file_get_contents(TESTS_ROOT . 'comparisons' . DS . __FUNCTION__ . '.js'),
             file_get_contents(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js')
         );
+    }
+
+    /**
+     * Test an import with the writeFile feature disabled.
+     *
+     * @return void
+     */
+    public function testImportNoWrite()
+    {
+        $this->task->setDestinationsMap([
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+        ]);
+        $this->task->disableWriteFile();
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(0, $result->getExitCode());
+        
+        $this->assertFalse(file_exists(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'));
+
+        $resultData = $result->getData();
+        $expected = [
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => [
+                'js' => '// Some bogus JS code goes here',
+                'destination' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+            ]
+        ];
+
+        $this->assertTrue(is_array($resultData));
+        $this->assertEquals($expected, $resultData);
     }
 
     /**
