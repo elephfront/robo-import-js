@@ -1,7 +1,7 @@
 <?php
 namespace Elephfront\RoboImportJs\Task\Loader;
 
-use Elephfront\RoboImportJs\Task\Assets\ImportJavascript;
+use Elephfront\RoboImportJs\Task\ImportJavascript;
 
 /**
  * Class LoadTasksTrait
@@ -15,7 +15,7 @@ trait LoadImportJavascriptTasksTrait
      * Exposes the ImportJavascript task.
      *
      * @param array $destinationMap Key / value pairs array where the key is the source and the value the destination.
-     * @return \Elephfront\RoboImportJs\Task\Assets\ImportJavascript
+     * @return \Elephfront\RoboImportJs\Task\ImportJavascript
      */
     protected function taskImportJavascript($destinationMap = [])
     {

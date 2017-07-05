@@ -1,9 +1,9 @@
 <?php
 namespace Elephfront\RoboImportJs\Tests;
 
-use Elephfront\RoboImportJs\Task\Assets\ImportJavascript;
+use Elephfront\RoboImportJs\Task\ImportJavascript;
+use Elephfront\RoboImportJs\Tests\Utility\MemoryLogger;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 use Robo\Result;
 use Robo\Robo;
 use Robo\State\Data;
@@ -21,7 +21,7 @@ class ImportJavascriptTest extends TestCase
     /**
      * Instance of the task that will be tested.
      *
-     * @var \Elephfront\RoboImportJs\Task\Assets\ImportJavascript
+     * @var \Elephfront\RoboImportJs\Task\ImportJavascript
      */
     protected $task;
 
@@ -35,7 +35,7 @@ class ImportJavascriptTest extends TestCase
         parent::setUp();
         Robo::setContainer(Robo::createDefaultContainer());
         $this->task = new ImportJavascript();
-        $this->task->setLogger(new NullLogger());
+        $this->task->setLogger(new MemoryLogger());
         if (file_exists(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js')) {
             unlink(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js');
         }
@@ -113,6 +113,14 @@ class ImportJavascriptTest extends TestCase
             file_get_contents(TESTS_ROOT . 'comparisons' . DS . __FUNCTION__ . '.js'),
             file_get_contents(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js')
         );
+
+        $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js';
+        $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $destination . '</info>';
+        $this->assertEquals(
+            $expectedLog,
+            $this->task->logger()->getLogs()[0]
+        );
     }
 
     /**
@@ -133,16 +141,12 @@ class ImportJavascriptTest extends TestCase
         
         $this->assertFalse(file_exists(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'));
 
-        $resultData = $result->getData();
-        $expected = [
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => [
-                'js' => '// Some bogus JS code goes here',
-                'destination' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
-            ]
-        ];
-
-        $this->assertTrue(is_array($resultData));
-        $this->assertEquals($expected, $resultData);
+        $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info>';
+        $this->assertEquals(
+            $expectedLog,
+            $this->task->logger()->getLogs()[0]
+        );
     }
 
     /**
@@ -196,5 +200,52 @@ class ImportJavascriptTest extends TestCase
 
         $this->assertTrue(is_array($resultData));
         $this->assertEquals($expected, $resultData);
+    }
+
+    /**
+     * Test an import with a source map containing multiple files.
+     *
+     * @return void
+     */
+    public function testMultipleSourcesImport()
+    {
+        $desinationsMap = [
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js',
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output-nested.js'
+        ];
+
+        $comparisonsMap = [
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => TESTS_ROOT . 'comparisons' . DS . 'testBasicImport.js',
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js' => TESTS_ROOT . 'comparisons' . DS . 'testNestedImport.js'
+        ];
+
+        $this->task->setDestinationsMap($desinationsMap);
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(0, $result->getExitCode());
+
+        foreach ($desinationsMap as $source => $destination) {
+            $this->assertEquals(
+                file_get_contents($comparisonsMap[$source]),
+                file_get_contents($destination)
+            );
+        }
+
+        $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js';
+        $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $destination . '</info>';
+        $this->assertEquals(
+            $expectedLog,
+            $this->task->logger()->getLogs()[0]
+        );
+
+        $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js';
+        $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output-nested.js';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $destination . '</info>';
+        $this->assertEquals(
+            $expectedLog,
+            $this->task->logger()->getLogs()[1]
+        );
     }
 }
