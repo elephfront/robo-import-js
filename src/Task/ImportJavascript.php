@@ -106,6 +106,8 @@ class ImportJavascript extends BaseTask implements TaskInterface
     public function run()
     {
         $error = false;
+        $source = '';
+
         if ($this->data) {
             foreach ($this->data as $source => $content) {
                 $js = $content['js'];
