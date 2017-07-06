@@ -166,8 +166,9 @@ class ImportJavascriptTest extends TestCase
      */
     public function testNestedImport()
     {
+        $basePath = TESTS_ROOT . 'app' . DS . 'js' . DS;
         $this->task->setDestinationsMap([
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+            $basePath . 'nested.js' => $basePath . 'deep' . DS . 'output.js'
         ]);
         $result = $this->task->run();
 
