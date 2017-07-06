@@ -177,7 +177,7 @@ class ImportJavascriptTest extends TestCase
 
         $this->assertEquals(
             file_get_contents(TESTS_ROOT . 'comparisons' . DS . __FUNCTION__ . '.js'),
-            file_get_contents(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js')
+            file_get_contents($basePath . 'deep' . DS . 'output.js')
         );
     }
 
