@@ -54,16 +54,6 @@ class ImportJavascript extends BaseTask implements TaskInterface
     protected $writeFile = true;
 
     /**
-     * Enables the `writeFile` property
-     *
-     * @return void
-     */
-    public function enableWriteFile()
-    {
-        $this->writeFile = true;
-    }
-
-    /**
      * Disables the `writeFile` property
      *
      * @return void
@@ -164,10 +154,6 @@ class ImportJavascript extends BaseTask implements TaskInterface
             if (isset($source)) {
                 $messageTemplate = 'An error occurred while writing the destination file for source file `%s`';
                 $outputMessage = sprintf($messageTemplate, $source);
-                if ($error !== $source) {
-                    $messageTemplate .= '. Error : %s';
-                    $outputMessage = sprintf($messageTemplate, $source, $error);
-                }
             } else {
                 $outputMessage = 'An unexpected error occurred';
             }
