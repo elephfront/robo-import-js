@@ -116,7 +116,8 @@ class ImportJavascriptTest extends TestCase
 
         $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js';
         $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js';
-        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $destination . '</info>';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>
+            ' . $destination . '</info>';
         $this->assertEquals(
             $expectedLog,
             $this->task->logger()->getLogs()[0]
@@ -209,14 +210,15 @@ class ImportJavascriptTest extends TestCase
      */
     public function testMultipleSourcesImport()
     {
+        $basePath = TESTS_ROOT . 'app' . DS . 'js' . DS;
         $desinationsMap = [
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js',
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output-nested.js'
+            $basePath . 'simple.js' => $basePath . 'output.js',
+            $basePath . 'nested.js' => $basePath . 'output-nested.js'
         ];
 
         $comparisonsMap = [
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => TESTS_ROOT . 'comparisons' . DS . 'testBasicImport.js',
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js' => TESTS_ROOT . 'comparisons' . DS . 'testNestedImport.js'
+            $basePath . 'simple.js' => TESTS_ROOT . 'comparisons' . DS . 'testBasicImport.js',
+            $basePath . 'nested.js' => TESTS_ROOT . 'comparisons' . DS . 'testNestedImport.js'
         ];
 
         $this->task->setDestinationsMap($desinationsMap);
@@ -232,9 +234,10 @@ class ImportJavascriptTest extends TestCase
             );
         }
 
-        $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js';
-        $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js';
-        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $destination . '</info>';
+        $source = $basePath . 'simple.js';
+        $destination = $basePath . 'output.js';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>
+            ' . $destination . '</info>';
         $this->assertEquals(
             $expectedLog,
             $this->task->logger()->getLogs()[0]
@@ -242,7 +245,8 @@ class ImportJavascriptTest extends TestCase
 
         $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js';
         $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output-nested.js';
-        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $destination . '</info>';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>
+            ' . $destination . '</info>';
         $this->assertEquals(
             $expectedLog,
             $this->task->logger()->getLogs()[1]
