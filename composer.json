@@ -23,7 +23,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Elephfront\\RoboImportJs\\Tests\\": "test/TestCase"
+            "Elephfront\\RoboImportJs\\Tests\\": "tests/TestCase",
+            "Elephfront\\RoboImportJs\\Tests\\Utility\\": "tests/Utility"
         }
     }
 }

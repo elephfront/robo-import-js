@@ -1,5 +1,5 @@
 <?php
-namespace Elephfront\RoboImportJs\Task\Assets;
+namespace Elephfront\RoboImportJs\Task;
 
 use InvalidArgumentException;
 use Robo\Contract\TaskInterface;
@@ -47,6 +47,23 @@ class ImportJavascript extends BaseTask implements TaskInterface
     protected $data = [];
 
     /**
+     * Whether or not the destination file should be written after the replace have been done.
+     *
+     * @var bool
+     */
+    protected $writeFile = true;
+
+    /**
+     * Disables the `writeFile` property
+     *
+     * @return void
+     */
+    public function disableWriteFile()
+    {
+        $this->writeFile = false;
+    }
+
+    /**
      * Constructor. Will bind the destinations map.
      *
      * @param array $destinationsMap Key / value pairs array where the key is the source and the value the destination.
@@ -79,6 +96,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
     public function run()
     {
         $error = false;
+
         if ($this->data) {
             foreach ($this->data as $source => $content) {
                 $js = $content['js'];
@@ -87,16 +105,19 @@ class ImportJavascript extends BaseTask implements TaskInterface
 
                 try {
                     $js = $this->replaceImports($js, $sourceDir);
+
+                    if ($this->writeFile && !$this->writeFile($destination, $js)) {
+                        $error = $source;
+                        break;
+                    }
+
+                    $this->outputSuccessMessage($source, $destination);
                     $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
-                    $this->printTaskSuccess(
-                        sprintf(
-                            'Replaced import statement from <info>%s</info> to <info>%s</info>',
-                            $source,
-                            $destination
-                        )
-                    );
                 } catch (InvalidArgumentException $e) {
-                    $error = $e->getMessage();
+                    return Result::error(
+                        $this,
+                        $e->getMessage()
+                    );
                 }
             }
         } else {
@@ -107,39 +128,84 @@ class ImportJavascript extends BaseTask implements TaskInterface
             }
 
             foreach ($this->destinationsMap as $source => $destination) {
-                $js = $this->getContent($source);
+                try {
+                    $js = $this->getContent($source);
 
-                $destinationDirectory = dirname($destination);
+                    $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
 
-                if (!is_dir($destinationDirectory)) {
-                    mkdir($destinationDirectory, 0755, true);
-                }
-
-                if (!file_put_contents($destination, $js)) {
-                    $error = $source;
-                    break;
-                } else {
-                    $this->printTaskSuccess(
-                        sprintf(
-                            'Replaced import statement from <info>%s</info> to <info>%s</info>',
-                            $source,
-                            $destination
-                        )
+                    if ($this->writeFile && !$this->writeFile($destination, $js)) {
+                        $error = $source;
+                        break;
+                    }
+                } catch (InvalidArgumentException $e) {
+                    return Result::error(
+                        $this,
+                        $e->getMessage()
                     );
                 }
 
-                $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
+                $this->outputSuccessMessage($source, $destination);
             }
         }
 
         if ($error) {
+            if (isset($source)) {
+                $messageTemplate = 'An error occurred while writing the destination file for source file `%s`';
+                $outputMessage = sprintf($messageTemplate, $source);
+            } else {
+                $outputMessage = 'An unexpected error occurred';
+            }
+
             return Result::error(
                 $this,
-                sprintf('An error occurred while writing the destination file for source file `%s`', $error)
+                $outputMessage
             );
         } else {
             return Result::success($this, 'All import statements in JS files replaced.', $this->returnData);
         }
+    }
+
+    /**
+     * Output a success message to the Console.
+     *
+     * @param string $source Path of the source file
+     * @param string $destination Path of the destination file
+     *
+     * @return void
+     */
+    public function outputSuccessMessage($source, $destination)
+    {
+        $outputMessage = 'Replaced import statement from file <info>%s</info>';
+
+        if ($this->writeFile) {
+            $outputMessage .= ' to <info>%s</info>';
+        }
+
+        $this->printTaskSuccess(
+            sprintf(
+                $outputMessage,
+                $source,
+                $destination
+            )
+        );
+    }
+
+    /**
+     * Write the `$destination` file with the javascript content passed in `$js`
+     *
+     * @param string $destination Path of the destination file to write in
+     * @param string $js Javascript content to write into the file
+     * @return int Number of bytes written or false on failure.
+     */
+    public function writeFile($destination, $js)
+    {
+        $destinationDirectory = dirname($destination);
+
+        if (!is_dir($destinationDirectory)) {
+            mkdir($destinationDirectory, 0755, true);
+        }
+
+        return file_put_contents($destination, $js);
     }
 
     /**

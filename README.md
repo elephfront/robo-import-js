@@ -35,6 +35,7 @@ class RoboFile extends Tasks
     
     public function concatJavascript()
     {
+        // The taskImportJavascript have the following signature :
         $this
             ->taskImportJavascript([
                 'assets/js/main.js' => 'assets/min/main.min.js',
@@ -45,7 +46,7 @@ class RoboFile extends Tasks
 }
 ```
 
-The only argument the `taskImportJavascript()` takes is an array which maps the source files to the destination files : it will load the **assets/js/main.js**, do its magic and put the final content in **assets/min/main.min.js** and do the same for all of the other files.
+The only argument the `taskImportJavascript()` takes is an array (`$destinationsMap`) which maps the source files to the destination files : it will load the **assets/js/main.js**, do its magic and put the final content in **assets/min/main.min.js** and do the same for all of the other files.
 
 In the end, you will get one file per entry in your maps array. 
 
@@ -68,7 +69,7 @@ Note that the task can read nested `roboimport()` statements, meaning an importe
 ## Chained State support
 
 Robo includes a concept called the [Chained State](http://robo.li/collections/#chained-state) that allows tasks that need to work together to be executed in a sequence and pass the state of the execution of a task to the next one.
-For instance, if you are managing assets files, you will have a task that compile SCSS to CSS then another one that minify the results. The first task can pass the state of its work to the next one.
+For instance, if you are managing assets files, you will have a task that compile SCSS to CSS then another one that minify the results. The first task can pass the state of its work to the next one, without having to call both methods in a separate sequence.
 
 The **robo-import-task** is compatible with this feature.
 
@@ -84,6 +85,21 @@ $data = [
 ```
 
 In turn, when the **robo-import-task** is done, it will pass the results of its work to the next task following the same format.
+
+## Preventing the results from being written
+
+By default, the **robo-import-task** writes the result of its work into the destination file(s) passed in the `$destinationsMap` argument. If the **robo-import-task** is not the last one in the sequence, you can disable the file writing using the `disableWriteFile()` method. The files will be processed but the results will not be persisted and only passed to the response :
+
+```php
+$this
+    ->taskImportJavascript([
+        'assets/js/main.js' => 'assets/min/main.min.js',
+        'assets/js/home.js' => 'assets/min/home.min.js',
+    ])
+        ->disableWriteFile()
+    ->someOtherTask()
+    ->run();
+```
 
 ## Contributing
 
