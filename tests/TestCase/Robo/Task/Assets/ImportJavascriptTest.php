@@ -76,7 +76,7 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(1, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_ERROR, $result->getExitCode());
         $this->assertEquals(
             'Impossible to find source file `bogus`',
             $result->getMessage()
@@ -97,9 +97,76 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(1, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_ERROR, $result->getExitCode());
         $this->assertEquals(
             'Impossible to find imported file `' . $basePath . DS . 'imports' . DS . 'not-here.js`',
+            $result->getMessage()
+        );
+    }
+
+    /**
+     * Tests that the task returns an error in case the file can not be written if normal mode
+     *
+     * @return void
+     */
+    public function testImportError()
+    {
+        $basePath = TESTS_ROOT . 'app' . DS . 'js';
+        $this->task = $this->getMockBuilder(ImportJavascript::class)
+            ->setMethods(['writeFile'])
+            ->getMock();
+        $this->task->setLogger(new MemoryLogger());
+
+        $this->task->method('writeFile')
+            ->willReturn(false);
+
+        $data = new Data();
+        $data->mergeData([
+            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js' => [
+                'js' => 'roboimport(\'imports/bogus\');',
+                'destination' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+            ]
+        ]);
+        $this->task->receiveState($data);
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(Result::EXITCODE_ERROR, $result->getExitCode());
+
+        $log = 'An error occurred while writing the destination file for source file `' . $basePath . DS . 'simple.js`';
+        $this->assertEquals(
+            $log,
+            $result->getMessage()
+        );
+    }
+
+    /**
+     * Tests that the task returns an error in case the file can not be written in "chained state mode"
+     *
+     * @return void
+     */
+    public function testImportErrorChainedState()
+    {
+        $basePath = TESTS_ROOT . 'app' . DS . 'js';
+        $this->task = $this->getMockBuilder(ImportJavascript::class)
+            ->setMethods(['writeFile'])
+            ->getMock();
+        $this->task->setLogger(new MemoryLogger());
+
+        $this->task->method('writeFile')
+            ->willReturn(false);
+
+        $this->task->setDestinationsMap([
+            $basePath . DS . 'simple.js' => $basePath . DS . 'output.js'
+        ]);
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(Result::EXITCODE_ERROR, $result->getExitCode());
+
+        $log = 'An error occurred while writing the destination file for source file `' . $basePath . DS . 'simple.js`';
+        $this->assertEquals(
+            $log,
             $result->getMessage()
         );
     }
@@ -117,7 +184,7 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_OK, $result->getExitCode());
 
         $this->assertEquals(
             file_get_contents(TESTS_ROOT . 'comparisons' . DS . __FUNCTION__ . '.js'),
@@ -147,7 +214,7 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_OK, $result->getExitCode());
         
         $this->assertFalse(file_exists(TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'));
 
@@ -173,7 +240,7 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_OK, $result->getExitCode());
 
         $this->assertEquals(
             file_get_contents(TESTS_ROOT . 'comparisons' . DS . __FUNCTION__ . '.js'),
@@ -199,7 +266,7 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_OK, $result->getExitCode());
         
         $resultData = $result->getData();
         $expected = [
@@ -235,7 +302,7 @@ class ImportJavascriptTest extends TestCase
         $result = $this->task->run();
 
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(Result::EXITCODE_OK, $result->getExitCode());
 
         foreach ($desinationsMap as $source => $destination) {
             $this->assertEquals(

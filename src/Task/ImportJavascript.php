@@ -134,10 +134,8 @@ class ImportJavascript extends BaseTask implements TaskInterface
                     $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
 
                     if ($this->writeFile && !$this->writeFile($destination, $js)) {
-                        if (!file_put_contents($destination, $js)) {
-                            $error = $source;
-                            break;
-                        }
+                        $error = $source;
+                        break;
                     }
                 } catch (InvalidArgumentException $e) {
                     return Result::error(
