@@ -106,7 +106,6 @@ class ImportJavascript extends BaseTask implements TaskInterface
     public function run()
     {
         $error = false;
-        $source = '';
 
         if ($this->data) {
             foreach ($this->data as $source => $content) {
@@ -125,8 +124,10 @@ class ImportJavascript extends BaseTask implements TaskInterface
                     $this->outputSuccessMessage($source, $destination);
                     $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
                 } catch (InvalidArgumentException $e) {
-                    $error = $e->getMessage();
-                    break;
+                    return Result::error(
+                        $this,
+                        $e->getMessage()
+                    );
                 }
             }
         } else {
@@ -153,11 +154,15 @@ class ImportJavascript extends BaseTask implements TaskInterface
         }
 
         if ($error) {
-            $messageTemplate = 'An error occurred while writing the destination file for source file `%s`';
-            $outputMessage = sprintf($messageTemplate, $source);
-            if ($error !== $source) {
-                $messageTemplate .= '. Error : %s';
-                $outputMessage = sprintf($messageTemplate, $source, $error);
+            if (isset($source)) {
+                $messageTemplate = 'An error occurred while writing the destination file for source file `%s`';
+                $outputMessage = sprintf($messageTemplate, $source);
+                if ($error !== $source) {
+                    $messageTemplate .= '. Error : %s';
+                    $outputMessage = sprintf($messageTemplate, $source, $error);
+                }
+            } else {
+                $outputMessage = 'An unexpected error occurred';
             }
 
             return Result::error(
