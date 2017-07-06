@@ -138,15 +138,22 @@ class ImportJavascript extends BaseTask implements TaskInterface
             }
 
             foreach ($this->destinationsMap as $source => $destination) {
-                $js = $this->getContent($source);
+                try {
+                    $js = $this->getContent($source);
 
-                $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
+                    $this->returnData[$source] = ['js' => $js, 'destination' => $destination];
 
-                if ($this->writeFile && !$this->writeFile($destination, $js)) {
-                    if (!file_put_contents($destination, $js)) {
-                        $error = $source;
-                        break;
+                    if ($this->writeFile && !$this->writeFile($destination, $js)) {
+                        if (!file_put_contents($destination, $js)) {
+                            $error = $source;
+                            break;
+                        }
                     }
+                } catch (InvalidArgumentException $e) {
+                    return Result::error(
+                        $this,
+                        $e->getMessage()
+                    );
                 }
 
                 $this->outputSuccessMessage($source, $destination);

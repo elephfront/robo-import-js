@@ -66,8 +66,6 @@ class ImportJavascriptTest extends TestCase
     /**
      * Tests that giving the task a destinations map with an invalid source file will throw an exception.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Impossible to find source file `bogus`
      * @return void
      */
     public function testInexistantSource()
@@ -75,23 +73,35 @@ class ImportJavascriptTest extends TestCase
         $this->task->setDestinationsMap([
             'bogus' => 'bogus'
         ]);
-        $this->task->run();
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(1, $result->getExitCode());
+        $this->assertEquals(
+            'Impossible to find source file `bogus`',
+            $result->getMessage()
+        );
     }
 
     /**
      * Test a basic import with a single import but with an inexistant imported file.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp #Impossible to find imported file `(.*)js/imports/not-here.js`#
-     *
      * @return void
      */
     public function testBasicImportWithInexistantImportedFile()
     {
+        $basePath = TESTS_ROOT . 'app' . DS . 'js';
         $this->task->setDestinationsMap([
-            TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple-wrong.js' => TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js'
+            $basePath . DS . 'simple-wrong.js' => $basePath . DS . 'output.js'
         ]);
-        $this->task->run();
+        $result = $this->task->run();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(1, $result->getExitCode());
+        $this->assertEquals(
+            'Impossible to find imported file `' . $basePath . DS . 'imports' . DS . 'not-here.js`',
+            $result->getMessage()
+        );
     }
 
     /**
@@ -115,9 +125,8 @@ class ImportJavascriptTest extends TestCase
         );
 
         $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'simple.js';
-        $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js';
-        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>
-            ' . $destination . '</info>';
+        $dest = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output.js';
+        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>' . $dest . '</info>';
         $this->assertEquals(
             $expectedLog,
             $this->task->logger()->getLogs()[0]
@@ -234,10 +243,11 @@ class ImportJavascriptTest extends TestCase
             );
         }
 
+        $sentenceStart = 'Replaced import statement from file';
+
         $source = $basePath . 'simple.js';
         $destination = $basePath . 'output.js';
-        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>
-            ' . $destination . '</info>';
+        $expectedLog = $sentenceStart . ' <info>' . $source . '</info> to <info>' . $destination . '</info>';
         $this->assertEquals(
             $expectedLog,
             $this->task->logger()->getLogs()[0]
@@ -245,8 +255,7 @@ class ImportJavascriptTest extends TestCase
 
         $source = TESTS_ROOT . 'app' . DS . 'js' . DS . 'nested.js';
         $destination = TESTS_ROOT . 'app' . DS . 'js' . DS . 'output-nested.js';
-        $expectedLog = 'Replaced import statement from file <info>' . $source . '</info> to <info>
-            ' . $destination . '</info>';
+        $expectedLog = $sentenceStart . ' <info>' . $source . '</info> to <info>' . $destination . '</info>';
         $this->assertEquals(
             $expectedLog,
             $this->task->logger()->getLogs()[1]
