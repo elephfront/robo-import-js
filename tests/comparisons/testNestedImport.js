@@ -5,3 +5,5 @@
 // This is the depth before the last
 
 // This is the bottom on the nested import chain
+// Some bogus JS code goes here
+// Some bogus JS code goes here
