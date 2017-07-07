@@ -2,6 +2,7 @@ language: php
 
 php:
   - 7.1
+  - nightly
 
 sudo: false
 
@@ -12,6 +13,7 @@ env:
 matrix:
   allow_failures:
     - env: CODECOVERAGE=1 DEFAULT=0
+    - php: nightly
 
   fast_finish: true
 
