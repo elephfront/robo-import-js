@@ -22,7 +22,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
      *
      * @var string
      */
-    const IMPORT_PATTERN = '/roboimport\(\'(.*)\'\);/';
+    const IMPORT_PATTERN = '/roboimport\(\'(.*)\'\);?/';
 
     /**
      * List of the destinations files mapped by the sources name. One source equals one destination.
