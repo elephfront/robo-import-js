@@ -12,8 +12,6 @@ use Robo\State\Data;
  * Class ImportJavascriptTest
  *
  * Test cases for the ImportJavascript Robo task.
- *
- * @package Mystiq\AlphaTheme\Tests
  */
 class ImportJavascriptTest extends TestCase
 {
