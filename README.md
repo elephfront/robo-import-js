@@ -70,9 +70,9 @@ Note that the task can read nested `roboimport()` statements, meaning an importe
 Robo includes a concept called the [Chained State](http://robo.li/collections/#chained-state) that allows tasks that need to work together to be executed in a sequence and pass the state of the execution of a task to the next one.
 For instance, if you are managing assets files, you will have a task that compile SCSS to CSS then another one that minify the results. The first task can pass the state of its work to the next one, without having to call both methods in a separate sequence.
 
-The **robo-import-task** is compatible with this feature.
+The **robo-import-js** task is compatible with this feature.
 
-All you need to do is make the previous task return the content the **robo-import-task** should operate on using the `data` argument of a `Robo\Result::success()` or `Robo\Result::error()` call. The passed `data` should have the following format:
+All you need to do is make the previous task return the content the **robo-import-js** task should operate on using the `data` argument of a `Robo\Result::success()` or `Robo\Result::error()` call. The passed `data` should have the following format:
  
 ```php
 $data = [
@@ -83,11 +83,11 @@ $data = [
 ];
 ```
 
-In turn, when the **robo-import-task** is done, it will pass the results of its work to the next task following the same format.
+In turn, when the **robo-import-js** task is done, it will pass the results of its work to the next task following the same format.
 
 ## Preventing the results from being written
 
-By default, the **robo-import-task** writes the result of its work into the destination file(s) passed in the `$destinationsMap` argument. If the **robo-import-task** is not the last one in the sequence, you can disable the file writing using the `disableWriteFile()` method. The files will be processed but the results will not be persisted and only passed to the response :
+By default, the **robo-import-js** task writes the result of its work into the destination file(s) passed in the `$destinationsMap` argument. If the **robo-import-js** task is not the last one in the sequence, you can disable the file writing using the `disableWriteFile()` method. The files will be processed but the results will not be persisted and only passed to the response :
 
 ```php
 $this
