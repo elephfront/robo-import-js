@@ -35,18 +35,17 @@ class RoboFile extends Tasks
     
     public function concatJavascript()
     {
-        // The taskImportJavascript have the following signature :
         $this
             ->taskImportJavascript([
-                'assets/js/main.js' => 'assets/min/main.min.js',
-                'assets/js/home.js' => 'assets/min/home.min.js',
+                'assets/js/main.js' => 'assets/min/js/main.min.js',
+                'assets/js/home.js' => 'assets/min/js/home.min.js',
             ])
             ->run();
     }
 }
 ```
 
-The only argument the `taskImportJavascript()` takes is an array (`$destinationsMap`) which maps the source files to the destination files : it will load the **assets/js/main.js**, do its magic and put the final content in **assets/min/main.min.js** and do the same for all of the other files.
+The only argument the `taskImportJavascript()` takes is an array (`$destinationsMap`) which maps the source files to the destination files : it will load the **assets/js/main.js**, do its magic and put the final content in **assets/min/js/main.min.js** and do the same for all of the other files.
 
 In the end, you will get one file per entry in your maps array. 
 
