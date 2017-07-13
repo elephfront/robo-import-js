@@ -9,6 +9,7 @@
  * @link          http://github.com/elephfront/robo-import-js
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+declare(strict_types=1);
 namespace Elephfront\RoboImportJs\Task;
 
 use InvalidArgumentException;
@@ -183,7 +184,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
      *
      * @return void
      */
-    public function outputSuccessMessage($source, $destination)
+    public function outputSuccessMessage(string $source, string $destination)
     {
         $outputMessage = 'Replaced import statement from file <info>%s</info>';
 
@@ -207,7 +208,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
      * @param string $js Javascript content to write into the file
      * @return int Number of bytes written or false on failure.
      */
-    public function writeFile($destination, $js)
+    public function writeFile(string $destination, string $js)
     {
         $destinationDirectory = dirname($destination);
 
@@ -226,11 +227,11 @@ class ImportJavascript extends BaseTask implements TaskInterface
      * @return string Source content with import statements replaced or source code unmodified.
      * @throws \InvalidArgumentException If a source file can not be found.
      */
-    protected function getContent($source)
+    protected function getContent(string $source)
     {
         $sourcePath = realpath($source);
 
-        if (!is_file($sourcePath)) {
+        if ($sourcePath === false || !is_file($sourcePath)) {
             throw new InvalidArgumentException(sprintf('Impossible to find source file `%s`', $source));
         }
 
@@ -250,7 +251,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
      * been found.
      * @throws \InvalidArgumentException If an imported file can not be found.
      */
-    protected function replaceImports($sourceContent, $sourceDir)
+    protected function replaceImports(string $sourceContent, string $sourceDir)
     {
         $imports = $this->findImports($sourceContent);
         if ($imports) {
@@ -277,7 +278,7 @@ class ImportJavascript extends BaseTask implements TaskInterface
      * @return array `$matches` array of the `preg_match_all()` or empty array if no import statement where found in the
      * source code.
      */
-    protected function findImports($sourceContent)
+    protected function findImports(string $sourceContent)
     {
         preg_match_all(self::IMPORT_PATTERN, $sourceContent, $matches);
 
