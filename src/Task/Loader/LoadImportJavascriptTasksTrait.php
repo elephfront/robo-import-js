@@ -9,6 +9,7 @@
  * @link          http://github.com/elephfront/robo-import-js
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+declare(strict_types=1);
 namespace Elephfront\RoboImportJs\Task\Loader;
 
 use Elephfront\RoboImportJs\Task\ImportJavascript;
@@ -27,7 +28,7 @@ trait LoadImportJavascriptTasksTrait
      * @param array $destinationMap Key / value pairs array where the key is the source and the value the destination.
      * @return \Elephfront\RoboImportJs\Task\ImportJavascript
      */
-    protected function taskImportJavascript($destinationMap = [])
+    protected function taskImportJavascript(array $destinationMap = [])
     {
         return $this->task(ImportJavascript::class, $destinationMap);
     }
